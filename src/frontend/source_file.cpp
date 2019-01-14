@@ -43,11 +43,14 @@ source_file CreateDataSource(const char *name, const char *data, uint32_t length
 	auto dataFile = boa::make<data_source_file>();
 	dataFile->File.Filename = InternIdent(name);
 	dataFile->File.Buffer = &dataFile->Buffer;
-	dataFile->Buffer.Data = data;
+	dataFile->Buffer.Data = (char*)boa::alloc(length + 2);
 	dataFile->Buffer.Length = length;
 	dataFile->Buffer.IsStatic = true;
 	dataFile->Buffer.File.Index = index;
 	dataFile->Buffer.RefCount = 1;
+	memcpy(dataFile->Buffer.Data, data, length);
+	dataFile->Buffer.Data[length] = '\0';
+	dataFile->Buffer.Data[length + 1] = '\0';
 	return { index };
 }
 
@@ -75,5 +78,6 @@ void CloseSourceBuffer(source_buffer *buffer)
 	source_file_impl *file_impl = g_Files[buffer->File.Index];
 	file_impl->Buffer = NULL;
 
+	boa::free(buffer_impl->Data);
 	boa::free(buffer_impl);
 }

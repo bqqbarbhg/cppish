@@ -11,6 +11,9 @@ struct ident {
 	const ident_str *String;
 };
 
+inline bool operator==(const ident &a, const ident &b) { return a.String == b.String; }
+inline bool operator!=(const ident &a, const ident &b) { return a.String != b.String; }
+
 ident InternIdentHash(const char *str, uint32_t length, uint32_t hash);
 ident InternIdent(const char *str, uint32_t length);
 inline ident InternIdent(const char *str) {
